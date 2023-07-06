@@ -42,7 +42,6 @@ const indexHtml = join(process.env.DIST, 'index.html')
 
 async function createWindow() {
   win = new BrowserWindow({
-    title: 'Main window',
     icon: join(process.env.PUBLIC, 'favicon.ico'),
     webPreferences: {
       preload,
@@ -88,7 +87,15 @@ app.on('second-instance', () => {
     if (win.isMinimized()) win.restore()
     win.focus()
   }
+  
 })
+
+
+app.on('before-quit', (event) => {
+  // 在这里执行关闭前的操作
+  // 可以阻止应用程序关闭，通过调用
+  event.preventDefault()
+});
 
 app.on('activate', () => {
   const allWindows = BrowserWindow.getAllWindows()
