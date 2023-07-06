@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2023-07-04 14:55:41
- * @LastEditTime: 2023-07-04 15:24:00
+ * @LastEditTime: 2023-07-06 14:40:42
  * @LastEditors: bogon
  * @Description: In User Settings Edit
  * @FilePath: /electron-vite-vue/src/api/request.js
@@ -16,7 +16,6 @@ const instance = axios.create({
     timeout: requestTimeout,
     headers: {
         'Content-Type': contentType,
-        'X-Token':'16326acfefc125eb8ed524f5be044dcf26e60859'
     },
 })
 

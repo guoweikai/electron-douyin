@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2023-07-04 16:40:28
- * @LastEditTime: 2023-07-04 20:09:27
+ * @LastEditTime: 2023-07-06 15:23:50
  * @LastEditors: bogon
  * @Description: In User Settings Edit
  * @FilePath: /electron-vite-vue/src/components/login/Login copy.vue
@@ -15,109 +15,70 @@
  * @FilePath: /electron-vite-vue/src/components/login/Login.vue
 -->
 <template>
-  <div class="header">
-    <el-button @click="handleClick" type="primary">网络加速</el-button>
+  <div class="content">
+    <el-form label-width="120px">
+      <el-form-item label="验证码">
+        <div class="code-wrap">
+          <el-input
+            v-model="code"
+            placeholder="请输入验证码获取推流地址"
+            class="mr10"
+          />
+          <el-button type="primary" @click="formCode">获取推流信息</el-button>
+        </div>
+      </el-form-item>
+      <el-form-item label="push_streamid">
+        <div class="streamid-wrap">
+          <el-input type="text" v-model="push_streamid" class="mr10" />
+          <el-button type="primary" @click="handleElCopy(push_streamid)"
+            >复制到剪切板</el-button
+          >
+        </div>
+      </el-form-item>
+      <el-form-item label="push_url">
+        <div class="streamid-wrap">
+          <el-input type="text" v-model="push_url" class="mr10" />
+          <el-button type="primary" @click="handleElCopy(push_url)"
+            >复制到剪切板</el-button
+          >
+        </div>
+      </el-form-item>
+    </el-form>
   </div>
-  <div class="content" v-if="!isOpen">
-    <h2>1.登录 chatGPT 请一定打开网络加速</h2>
-    <h2>2.授权码请联系客服人员获取</h2>
-  </div>
-
-  <el-dialog
-    v-model="dialogVisibleCode"
-    title="请输入授权码"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :show-close="false"
-  >
-    <el-input placeholder="请输入授权码" v-model="code" clearable> </el-input>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button type="primary" @click="formCode"> Confirm </el-button>
-      </span>
-    </template>
-  </el-dialog>
-  <el-dialog
-    v-model="dialogVisibleNet"
-    title="网络加速"
-    :modal="false"
-    width="300px"
-    modal-class="net-class"
-  >
-    <ul>
-      <li v-for="item in vpnList" :key="item.id">
-        <span>{{ item.city_cn }}</span>
-        <el-switch
-          @change="switchOpen(item)"
-          v-model="item.isOpen"
-          active-text="打开"
-          inactive-text="关闭"
-        />
-      </li>
-    </ul>
-  </el-dialog>
-  <iframe v-if="isOpen" src="https://chat.openai.com"></iframe>
+  <div></div>
 </template>
 <script lang="ts" setup>
-import XfutrueWeb from "../../lib/XfutrueWeb.js";
-import { getNodeList } from "../../api/node.js";
-import { ref, onMounted } from "vue";
-const xfutrueWeb = new XfutrueWeb();
-
-onMounted(async () => {
-  let { data } = await getNodeList();
-  data.forEach((item: VpnListItem) => {
-    item.isOpen = false;
-  });
-  vpnList.value = data;
-});
-type VpnListItem = {
-  address: String;
-  address_1level_proxy: String;
-  address_cn: String;
-  address_cn_private: String;
-  city_cn: String;
-  city_en: String;
-  continent: String;
-  country: String;
-  created_at: String;
-  id: Number;
-  ip: Number;
-  is_disable: Boolean;
-  is_vip: Boolean;
-  port: Number;
-  updated_at: String;
-  isOpen?: Boolean;
-};
-const dialogVisibleCode = ref(true);
-let dialogVisibleNet = ref(false);
-let isOpen = ref(false);
+import { getStream } from "../../api/node.js";
+import { ElNotification, ElLoading } from "element-plus";
+import { ref } from "vue";
+import { elCopy } from "../../util/index.ts";
 let code = ref("");
-let vpnList = ref([]);
-const formCode = () => {
-  dialogVisibleCode.value = false;
-  xfutrueWeb.install();
-};
-const switchOpen = (item: VpnListItem) => {
-  vpnList.value.forEach((vpnItem: VpnListItem) => {
-    if (item.isOpen) {
-      item.isOpen = false;
-      xfutrueWeb.close();
-    }
-  });
-  if (item.isOpen) {
-    item.isOpen = false;
-    xfutrueWeb.close();
-  } else {
-    item.isOpen = true;
-    xfutrueWeb.SetupURL(item.address);
-    dialogVisibleNet.value = false;
-    isOpen.value = true;
-    // window.location.href ="https://chat.openai.com"
+let push_streamid = ref("");
+let push_url = ref("");
+const formCode = async () => {
+  const loadingInstance = ElLoading.service({ fullscreen: true });
+  try {
+    let data = await getStream(code.value);
+    push_streamid.value = data.push_streamid;
+    push_url.value = data.push_url;
+    ElNotification({
+      message: "获取推流地址成功",
+      type: "success",
+    });
+  } catch (error) {
+    ElNotification({
+      message: "请输入正确的授权码",
+      type: "error",
+    });
   }
+  loadingInstance.close();
 };
-const handleClick = () => {
-  dialogVisibleNet.value = true;
+const handleElCopy = (value: string) => {
+  elCopy(value);
+  ElNotification({
+    message: "已经复制到剪切板上了",
+    type: "success",
+  });
 };
 </script>
 <style>
@@ -146,9 +107,14 @@ const handleClick = () => {
   top: 50%;
   transform: translate(-50%, -50%); /*自己的50% */
 }
-iframe {
-  width: 100%;
-  height: 100vh;
-  border: none;
+.streamid-wrap {
+  display: flex;
+  align-items: center;
+}
+.el-input {
+  width: 350px !important;
+}
+.code-wrap {
+  display: flex;
 }
 </style>

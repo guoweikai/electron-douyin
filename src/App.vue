@@ -1,10 +1,5 @@
 <script setup lang="ts">
 import Login from "./components/login/Login.vue";
-console.log("www")
-console.log(
-  "[App.vue]",
-  `Hello world from Electron ${process.versions.electron}!`
-);
 </script>
 
 <template>
