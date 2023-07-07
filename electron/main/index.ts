@@ -94,7 +94,7 @@ app.on('second-instance', () => {
 app.on('before-quit', (event) => {
   // 在这里执行关闭前的操作
   // 可以阻止应用程序关闭，通过调用
-  event.preventDefault()
+  // event.preventDefault()
 });
 
 app.on('activate', () => {

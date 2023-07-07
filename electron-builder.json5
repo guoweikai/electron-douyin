@@ -13,6 +13,7 @@
     "dist"
   ],
   "mac": {
+     "icon": "public/icons/icon.icns",
     "artifactName": "${productName}_${version}.${ext}",
     "target": [
       "dmg"

@@ -1,6 +1,6 @@
 {
   "name": "dy",
-  "version": "2.0.0",
+  "version": "1.0.2",
   "main": "dist-electron/main/index.js",
   "description": "Really simple Electron + Vue + Vite boilerplate.",
   "author": "gwk",
@@ -36,7 +36,6 @@
   },
   "dependencies": {
     "axios": "^1.4.0",
-    "element-plus": "^2.3.7",
-    "xfuture": "^1.1.1"
+    "element-plus": "^2.3.7"
   }
 }

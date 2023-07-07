@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2023-07-04 16:40:28
- * @LastEditTime: 2023-07-06 15:23:50
+ * @LastEditTime: 2023-07-06 16:26:48
  * @LastEditors: bogon
  * @Description: In User Settings Edit
  * @FilePath: /electron-vite-vue/src/components/login/Login copy.vue
@@ -15,27 +15,24 @@
  * @FilePath: /electron-vite-vue/src/components/login/Login.vue
 -->
 <template>
+      <div class="header">
+      <h4 class="title">
+        公告:本软件为辅助测试软件，使用者不得利用软件发布违法违规内容，软件不会收集和监控软件运行过程，对用户使用软件用途完全不知情，对软件使用用途已明确告知只能用来做正常合法使用，本辅助对用户使用软件产生的后果不承担任何责任
+      </h4>
+    </div>
   <div class="content">
-    <el-form label-width="120px">
+    <el-form label-width="80px">
       <el-form-item label="验证码">
         <div class="code-wrap">
           <el-input
             v-model="code"
-            placeholder="请输入验证码获取推流地址"
+            placeholder="请输入验证码获取服务器地址"
             class="mr10"
           />
           <el-button type="primary" @click="formCode">获取推流信息</el-button>
         </div>
       </el-form-item>
-      <el-form-item label="push_streamid">
-        <div class="streamid-wrap">
-          <el-input type="text" v-model="push_streamid" class="mr10" />
-          <el-button type="primary" @click="handleElCopy(push_streamid)"
-            >复制到剪切板</el-button
-          >
-        </div>
-      </el-form-item>
-      <el-form-item label="push_url">
+      <el-form-item label="服务器">
         <div class="streamid-wrap">
           <el-input type="text" v-model="push_url" class="mr10" />
           <el-button type="primary" @click="handleElCopy(push_url)"
@@ -43,22 +40,30 @@
           >
         </div>
       </el-form-item>
+      <el-form-item label="串流秘钥">
+        <div class="streamid-wrap">
+          <el-input type="text" v-model="push_streamid" class="mr10" />
+          <el-button type="primary" @click="handleElCopy(push_streamid)"
+            >复制到剪切板</el-button
+          >
+        </div>
+      </el-form-item>
     </el-form>
+
   </div>
-  <div></div>
 </template>
 <script lang="ts" setup>
-import { getStream } from "../../api/node.js";
+import { getStream } from "../../api/node";
 import { ElNotification, ElLoading } from "element-plus";
 import { ref } from "vue";
-import { elCopy } from "../../util/index.ts";
+import { elCopy } from "../../util/index";
 let code = ref("");
 let push_streamid = ref("");
 let push_url = ref("");
 const formCode = async () => {
   const loadingInstance = ElLoading.service({ fullscreen: true });
   try {
-    let data = await getStream(code.value);
+    let data: any = await getStream(code.value);
     push_streamid.value = data.push_streamid;
     push_url.value = data.push_url;
     ElNotification({
@@ -85,7 +90,7 @@ const handleElCopy = (value: string) => {
 .header {
   position: absolute;
   top: 0;
-  right: 5px;
+  left:0
 }
 .net-class .el-dialog__body {
   padding-top: 0;
@@ -116,5 +121,12 @@ const handleElCopy = (value: string) => {
 }
 .code-wrap {
   display: flex;
+}
+.footer {
+  margin-top: 80px;
+}
+.title {
+  text-align: left;
+  margin: 0px 10px;
 }
 </style>
